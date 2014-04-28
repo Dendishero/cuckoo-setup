@@ -37,7 +37,7 @@ Modify Registry
 
 # Parameter list
 param (
-    [string]$username = $( throw"-username is required."),
+    [string]$username = $( throw "provide -username flag "),
     [string]$password = $( Read-Host "Input password, please" ),
     [switch]$extras = $false,
     [switch]$deps = $false,
