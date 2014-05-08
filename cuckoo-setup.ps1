@@ -84,7 +84,7 @@ reg add "hklm\system\CurrentControlSet\Control\Session Manager" /v BootExecute /
 # Enable auto logon for user
 reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v DefaultUserName /d $username /t REG_SZ /f 
 reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v DefaultPassword /d $password /t REG_SZ /f 
-reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v AutoAdminLogone /d 1 /t REG_SZ /f 
+reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v AutoAdminLogon /d 1 /t REG_SZ /f 
 
 # Disable Screen Saver 
 reg add "hkcu\Control Panel\Desktop" /v ScreenSaveActive /d 0 /t REG_SZ /f 
