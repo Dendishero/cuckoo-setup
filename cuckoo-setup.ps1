@@ -48,10 +48,12 @@ param (
 if ($deps -eq $true) {
     Write-Host '[+] Installing Dependencies'
     $items = gci 'deps' -Name
+    cd deps
     foreach ($item in $items) {
         Write-Host '[+] Installing' $item
         & $item /quiet /norestart
     }
+    cd ..
 }
 
 
@@ -64,11 +66,6 @@ if ($extras -eq $true) {
     }
 }
 
-# testing...
-if ($custom -eq $true) {
-    $adobe = Read-Host "Which version of Adobe would you like to install?"
-    Write-Host $adobe
-}
 
 Write-Host '[+] Installing agent'
 cp agent\agent.py "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup\agent.pyw"
@@ -97,4 +94,14 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\S
 
 # Disable UAC
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /d 0x00 /t REG_DWORD /f
+
+# Turn off paging
+wmic computersystem where name="%computername%" set
+AutomaticMangedPagefile=False
+
+wmic pagefileset where name="C:\\pagefile.sys" set
+InitialSize=0,MaximumSize=0
+
+# Turn off hibernate
+powercfg -h off
 
