@@ -1,4 +1,4 @@
-﻿<#
+<#
  
 .SYNOPSIS
 This is a simple Powershell script do basic setup tasks for a cuckoo guest
@@ -51,7 +51,9 @@ if ($deps -eq $true) {
     cd deps
     foreach ($item in $items) {
         Write-Host '[+] Installing' $item
-        & $item /quiet /norestart
+        #Start-Process $item /quiet 
+        msiexec.exe /i $item ADDLOCAL=ALL /quiet /norestart
+        #& $item /quiet /norestart
     }
     cd ..
 }
@@ -78,6 +80,16 @@ Write-Host '[+] Modifying Registry'
 # Turn off CHKDSK for C Drive
 reg add "hklm\system\CurrentControlSet\Control\Session Manager" /v BootExecute /d "autocheck autochk /k:C *" /t REG_MULTI_SZ /f 
 
+# Create User
+
+Write-Host '[+] Creating User'
+$ComputerName = $env:ComputerName 
+$cn = [ADSI]"WinNT://$ComputerName"
+$user = $cn.Create("User",$username)
+$user.SetPassword($passsowrd)
+$user.setinfo()
+
+
 # Enable auto logon for user
 reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v DefaultUserName /d $username /t REG_SZ /f 
 reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v DefaultPassword /d $password /t REG_SZ /f 
@@ -96,12 +108,11 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\S
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /d 0x00 /t REG_DWORD /f
 
 # Turn off paging
-wmic computersystem where name="%computername%" set
-AutomaticMangedPagefile=False
+wmic computersystem where name="%computername%" set AutomaticMangedPagefile=False
 
-wmic pagefileset where name="C:\\pagefile.sys" set
-InitialSize=0,MaximumSize=0
+wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=0,MaximumSize=0
 
 # Turn off hibernate
 powercfg -h off
+
 
