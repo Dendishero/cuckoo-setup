@@ -48,12 +48,17 @@ param (
 if ($deps -eq $true) {
     Write-Host '[+] Installing Dependencies'
     $items = gci 'deps' -Name
+
     cd deps
     foreach ($item in $items) {
         Write-Host '[+] Installing' $item
         #Start-Process $item /quiet 
-        msiexec.exe /i $item ADDLOCAL=ALL /quiet /norestart
-        #& $item /quiet /norestart
+        if ($item -match '.*\.msi'){
+            msiexec.exe /i $item ADDLOCAL=ALL /quiet /norestart
+        }
+        else {
+            Start-Process $item -Wait
+        }
     }
     cd ..
 }
