@@ -82,13 +82,16 @@ reg add "hklm\system\CurrentControlSet\Control\Session Manager" /v BootExecute /
 
 # Create User
 
-Write-Host '[+] Creating User'
-$ComputerName = $env:ComputerName 
-$cn = [ADSI]"WinNT://$ComputerName"
-$user = $cn.Create("User",$username)
-$user.SetPassword($passsowrd)
-$user.setinfo()
+# Create new local Admin user for script purposes
+$Computer = [ADSI]"WinNT://$Env:COMPUTERNAME,Computer"
 
+$LocalAdmin = $Computer.Create("User", $username)
+$LocalAdmin.SetPassword($password)
+$LocalAdmin.SetInfo()
+$LocalAdmin.FullName = $username
+$LocalAdmin.SetInfo()
+$LocalAdmin.UserFlags = 64 + 65536 # ADS_UF_PASSWD_CANT_CHANGE + ADS_UF_DONT_EXPIRE_PASSWD
+$LocalAdmin.SetInfo()
 
 # Enable auto logon for user
 reg add "hklm\software\Microsoft\Windows NT\CurrentVersion\WinLogon" /v DefaultUserName /d $username /t REG_SZ /f 
