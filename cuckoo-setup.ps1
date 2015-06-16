@@ -125,4 +125,7 @@ wmic pagefileset where name="C:\\pagefile.sys" set InitialSize=0,MaximumSize=0
 # Turn off hibernate
 powercfg -h off
 
-
+$CurrentScriptFullPathName = $MyInvocation.MyCommand.Definition
+$CurrentScriptName = $MyInvocation.MyCommand.Name
+write "Deleting: $CurrentScriptFullPathName"
+Remove-Item $CurrentScriptFullPathName
