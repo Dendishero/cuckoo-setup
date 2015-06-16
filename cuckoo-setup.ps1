@@ -52,13 +52,15 @@ if ($deps -eq $true) {
     cd deps
     foreach ($item in $items) {
         Write-Host '[+] Installing' $item
-        #Start-Process $item /quiet 
+        #Start-Process $item /quiet
+        $MsiArray = @() 
         if ($item -match '.*\.msi'){
-            msiexec.exe /i $item ADDLOCAL=ALL /quiet /norestart
+            $MsiArray += , $item
         }
         else {
             Start-Process $item -Wait
         }
+        msiexec.exe /i $item ADDLOCAL=ALL /quiet /norestart
     }
     cd ..
 }
